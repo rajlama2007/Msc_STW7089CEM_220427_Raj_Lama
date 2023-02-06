@@ -1,0 +1,453 @@
+##Library used for this assignment
+```{r}
+library(rsample)
+library(matlib)
+library(ggplot2)
+
+```
+
+```{r}
+#Importing Data X
+X = as.matrix(read.csv("C:/Users/Asus/Downloads/X_1673241366257.csv", header=F))
+colnames(X) = c("X1", "X2", "X3", "X4")
+X
+```
+
+```{r}
+#importing Data Y
+Y = as.matrix(read.csv("C:/Users/Asus/Downloads/y_1673241374123.csv", header=F))
+colnames(Y)=c("Y")
+Y
+```
+```{r}
+#Importing Time Data
+Time=read.csv("C:/Users/Asus/Downloads/time_1673241270748.csv", header= F, skip=1)
+Time=as.matrix(rbind(0,Time))
+colnames(Time)<-c("Time")
+Time
+```
+```{r}
+#Task 1 Creating time series plot
+#Defining the value of X and Y against time for timeseries plot
+Xts<-ts(X,start = c(min(Time),max(Time)),frequency = 1)
+Yts<-ts(Y,start = c(min(Time),max(Time)),frequency = 1)
+
+#Plotting above Graphs
+plot(Xts, col="red",main="Time series plot of X Signal", xlab="Time",ylab="Input signal")
+plot(Yts, col="red",main="Time series plot of Y signal", xlab="Time",ylab="Output signal")
+```
+```{r}
+#Task1:Creating a distribution/density plot by the help of histogram
+#Creating a density if X signal
+dens=density(X)
+plot(dens,col="main="Density Plot of whole Input Signal")
+
+#Creating a Histogram of all X Signal
+hist(X,col="skyblue",freq = FALSE,main="Histogram with Density")
+
+#Merging Both Histogram and Density together with noise 
+lines(dens,lwd=2,col="red")
+rug(jitter(X))
+
+```
+```{r}
+#creating a histogram with a density of X1 Signal with rug
+dens_X1=density(X[,"X1"])
+hist(X[,"X1"],col="skyblue",freq = FALSE,main="Histogram with Density Plot of X1 with rug",xlab="X1 Signal")
+lines(dens_X1,lwd=2,col="red")
+rug(jitter(X[,"X1"]))
+
+```
+```{r}
+#creating a density of X2 Signal
+dens_X2=density(X[,"X2"])
+hist(X[,"X2"],col="skyblue",freq = FALSE,main="Histogram with Density Plot of X2 with rug",xlab="X2 Signal")
+lines(dens_X2,lwd=2,col="red")
+rug(jitter(X[,"X2"]))
+```
+```{r}
+#creating a density of X3 Signal
+dens_X3=density(X[,"X3"])
+hist(X[,"X3"],col="skyblue",freq = FALSE,main="Histogram with Density Plot of X3 with rug",xlab="X3 Signal")
+lines(dens_X3,lwd=2,col="red")
+rug(jitter(X[,"X3"]))
+```
+```{r}
+#creating a density of X4 Signal
+dens_X4=density(X[,"X4"])
+hist(X[,"X4"],col="skyblue",freq = FALSE,main="Histogram with Density Plot of X4 with rug",xlab="X4 Signal")
+lines(dens_X4,lwd=2,col="red")
+rug(jitter(X[,"X4"]))
+```
+```{r}
+#creating a density and histogram of Y Signal
+dens_y=density(Y)
+plot(dens_y,col="red",main="Density Plot of Y",xlab="Output Signal")
+hist(Y,col="skyblue",freq = FALSE,main="Histogram and Density Plot of Y with rug",xlab="Output Signal")
+lines(dens_y,lwd=2,col="red")
+rug(jitter(Y))
+
+```
+```{r}
+##Task 1: Creating Correlation and Scatter Plot
+#Plotting X1 against Y to visualize the relationship between the X1 signal and the output signal
+plot(X[,"X1"],col="skyblue",Y,main="Correlation Between X1 and Y Signal",xlab="X1 Signal",ylab="Output Signal")
+```
+```{r}
+#Plotting X2 against Y to visualize the relationship between the X2 signal and the output signal
+plot(X[,"X2"],col="blue",Y,main="Correlation Between X2 and Y Signal",xlab="X2 Signal",ylab="Output Signal")
+```
+```{r}
+#Plotting X3 against Y to visualize the relationship between the X3 signal and the output signal
+plot(X[,"X3"],col="darkgreen",Y,main="Correlation Between X3 and Y Signal",xlab="X3 Signal",ylab="Output Signal")
+```
+```{r}
+#Plotting X4 against Y to visualize the relationship between the X4 signal and the output signal
+plot(X[,"X4"],col="darkblue",Y,main="Correlation Between X4 and Y Signal",xlab="X4 Signal",ylab="Output Signal")
+```
+```{r}
+#Task 2
+#Calculating Ones for Binding the data
+ones=matrix(1,length(X)/4,1)
+ones
+```
+```{r}
+#Task 2.1
+#Calculating Thetahat of Model 1
+#Binding data from equation of model 1.
+X_model1<-cbind(ones,(X[,"X4"]),(X[,"X1"])^2,(X[,"X1"])^3,(X[,"X2"])^4,(X[,"X1"])^4)
+X_model1
+#Calculating Thetahat of model 1
+Model1_thetahat=solve(t(X_model1) %*% X_model1) %*% t(X_model1) %*% Y
+Model1_thetahat
+
+```
+```{r}
+#Binding data from equation of model 2.
+X_model2<-cbind(ones,(X[,"X4"]),(X[,"X1"])^3,(X[,"X3"])^4)
+X_model2
+#Calculating Thetahat of model 2
+Model2_thetahat=solve(t(X_model2) %*% X_model2) %*% t(X_model2) %*% Y
+Model2_thetahat
+```
+```{r}
+#Binding data from equation of model 3.
+X_model3<-cbind(ones,(X[,"X3"])^3,(X[,"X3"])^4)
+X_model3
+#Calculating Thetahat of Model 3
+Model3_thetahat=solve(t(X_model3) %*% X_model3) %*% t(X_model3) %*% Y
+Model3_thetahat
+
+```
+```{r}
+#Binding data from equation of model 4.
+X_model4<-cbind(ones,X[,"X2"],X[,"X1"]^3,X[,"X3"]^4)
+X_model4
+#Calculating Thetahat of Model 4
+Model4_thetahat=solve(t(X_model4) %*% X_model4) %*% t(X_model4) %*% Y
+Model4_thetahat
+
+```
+```{r}
+#Binding data from equation of model 5.
+X_model5<-cbind(ones,X[,"X4"],X[,"X1"]^2,X[,"X1"]^3,X[,"X3"]^4)
+X_model5
+#Calculating Thetahat of Model 5
+Model5_thetahat=solve(t(X_model5) %*% X_model5) %*% t(X_model5) %*% Y
+Model5_thetahat
+```
+```{r}
+#Task 2.2
+#Calculating Y-hat and Rss Model 1
+m1_Y_hat = X_model1 %*% Model1_thetahat
+m1_Y_hat
+
+#RSS
+Model1_RSS=sum((Y-m1_Y_hat)^2)
+Model1_RSS
+```
+```{r}
+#Calculating Y-hat and Rss Model 2
+m2_Y_hat = X_model2 %*% Model2_thetahat
+m2_Y_hat
+
+#RSS
+Model2_RSS=sum((Y-m2_Y_hat)^2)
+Model2_RSS
+```
+```{r}
+#Calculating Y-hat and Rss Model 3
+m3_Y_hat = X_model3 %*% Model3_thetahat
+m3_Y_hat
+
+#RSS
+Model3_RSS=sum((Y-m3_Y_hat)^2)
+Model3_RSS
+```
+```{r}
+#Calculating Y-hat and Rss Model 4
+m4_Y_hat = X_model4 %*% Model4_thetahat
+m4_Y_hat
+
+#RSS
+Model4_RSS=sum((Y-m4_Y_hat)^2)
+Model4_RSS
+```
+```{r}
+#Calculating Y-hat and Rss Model 5
+m5_Y_hat = X_model5 %*% Model5_thetahat
+m5_Y_hat
+
+#RSS
+Model5_RSS=sum((Y-m5_Y_hat)^2)
+Model5_RSS 
+```
+```{r}
+N=length(Y)
+#Variance of Model 1
+Model1_Variance=Model1_RSS/(N-1)
+Model1_Variance
+#log-likelihood of Model 1
+Model1_Likelihood=
+-(N/2)*(log(2*pi))-(N/2)*(log(Model1_Variance))-(1/(2*Model1_Variance))*Model1_RSS
+Model1_Likelihood
+
+```
+```{r}
+#Variance of Model 2
+Model2_Variance=Model2_RSS/(N-1)
+Model2_Variance
+#log-likelihood of Model 2
+Model2_Likelihood=
+-(N/2)*(log(2*pi))-(N/2)*(log(Model2_Variance))-(1/(2*Model2_Variance))*Model2_RSS
+Model2_Likelihood
+```
+```{r}
+#Variance of Model 3
+Model3_Variance=Model3_RSS/(N-1)
+Model3_Variance
+#log-likelihood of Model 3
+Model3_Likelihood=
+-(N/2)*(log(2*pi))-(N/2)*(log(Model3_Variance))-(1/(2*Model3_Variance))*Model3_RSS
+Model3_Likelihood
+```
+```{r}
+#Variance of Model 4
+Model4_Variance=Model4_RSS/(N-1)
+Model4_Variance
+#log-likelihood of Model 4
+Model4_Likelihood=
+-(N/2)*(log(2*pi))-(N/2)*(log(Model4_Variance))-(1/(2*Model4_Variance))*Model4_RSS
+Model4_Likelihood
+```
+```{r}
+#Variance of Model 5
+Model5_Variance=Model5_RSS/(N-1)
+Model5_Variance
+#log-likelihood of Model 5
+Model5_Likelihood=
+-(N/2)*(log(2*pi))-(N/2)*(log(Model5_Variance))-(1/(2*Model5_Variance))*Model5_RSS
+Model5_Likelihood
+```
+```{r}
+##TASK 2.4 CALCULATING AIC AND BIC OF EACH MODEL
+#Model 1 Thetahat
+mdl1_k<-length(Model1_thetahat)
+mdl1_k
+#Model 1 AIC and BIC
+AIC_mdl1=2*mdl1_k-2*Model1_Likelihood
+AIC_mdl1
+BIC_mdl1=mdl1_k*log(N)-2*Model1_Likelihood
+BIC_mdl1
+
+```
+```{r}
+#Model 2 Thetahat
+mdl2_k<-length(Model2_thetahat)
+mdl2_k
+#Model 2 AIC and BIC
+AIC_mdl2=2*mdl2_k-2*Model2_Likelihood
+AIC_mdl2
+BIC_mdl2=mdl2_k*log(N)-2*Model2_Likelihood
+BIC_mdl2
+```
+```{r}
+#Model 3 Thetahat
+mdl3_k<-length(Model3_thetahat)
+mdl3_k
+#Model 3 AIC and BIC
+AIC_mdl3=2*mdl3_k-2*Model3_Likelihood
+AIC_mdl3
+BIC_mdl3=mdl3_k*log(N)-2*Model3_Likelihood
+BIC_mdl3
+```
+```{r}
+#Model 4 Thetahat
+mdl4_k<-length(Model4_thetahat)
+mdl4_k
+#Model 4 AIC and BIC
+AIC_mdl4=2*mdl4_k-2*Model4_Likelihood
+AIC_mdl4
+BIC_mdl4=mdl4_k*log(N)-2*Model4_Likelihood
+BIC_mdl4
+```
+```{r}
+#Model 5 Thetahat
+mdl5_k<-length(Model5_thetahat)
+mdl5_k
+#Model 5 AIC and BIC
+AIC_mdl5=2*mdl5_k-2*Model5_Likelihood
+AIC_mdl5
+BIC_mdl5=mdl5_k*log(N)-2*Model5_Likelihood
+BIC_mdl5
+```
+```{r}
+#TASK 2.5
+#Model1 Error
+mdl1_error <- Y-m1_Y_hat
+##QQplot Graph and QQ line of model 1
+qqnorm(mdl1_error, col = "skyblue",main = "QQ plot of Model 1")
+qqline(mdl1_error, col = "red",lwd=1)
+
+```
+```{r}
+#Model2 Error
+mdl2_error <- Y-m2_Y_hat
+##QQplot Graph and QQ line of model 2
+qqnorm(mdl2_error, col = "darkgreen",main = "QQ plot of Model 2")
+qqline(mdl2_error, col = "red",lwd=1)
+```
+```{r}
+#Model3 Error
+mdl3_error <- Y-m3_Y_hat
+##QQplot Graph and QQ line of model 3
+qqnorm(mdl3_error, col = "blue",main = "QQ plot of Model 3")
+qqline(mdl3_error, col = "red",lwd=1)
+```
+```{r}
+#Model4 Error
+mdl4_error <- Y-m4_Y_hat
+##QQplot Graph and QQ line of model 4
+qqnorm(mdl4_error, col = "purple",main = "QQ plot of Model 4")
+qqline(mdl4_error, col = "red",lwd=1)
+```
+```{r}
+#Model5 Error
+mdl5_error <- Y-m5_Y_hat
+##QQplot Graph and QQ line of model 5
+qqnorm(mdl5_error, col = "darkblue",main = "QQ plot of Model 5")
+qqline(mdl5_error, col = "red",lwd=1)
+```
+```{r}
+#TASK 2.7
+#Spliting the data of Y into Training and Testing data set installing package tidymodels.
+split_Y<-initial_split(data = as.data.frame(Y),prop=.7)
+#Training Y data split
+Y_training_set<-training(split_Y)
+Y_testing_set<-as.matrix(testing(split_Y))
+# Testing Y data split
+Y_training_data<-as.matrix(Y_training_set)
+Y_training_data
+```
+
+```{r}
+## Spliting the data of X into Training and Testing data set
+split_X<-initial_split(data = as.data.frame(X),prop=.7)
+## Training X data split
+X_training_set<-training(split_X)
+## Testing X data split
+X_testing_set<-as.matrix(testing(split_X))
+X_testing_data<-as.matrix(X_testing_set)
+X_training_data<-as.matrix(X_training_set)
+```
+```{r}
+#Estimating model parameters using Training set
+training_ones=matrix(1 , length(X_training_set$X2),1)
+X_training_model<-cbind(training_ones,X_training_set[,"X2"],(X_training_set[,"X1"])^3,(X_training_set[,"X3"])^4)
+X_training_model
+training_thetahat=solve(t(X_training_model) %*% X_training_model) %*% t(X_training_model) %*% training_data
+training_thetahat
+```
+```{r}
+# Model out/Prediction
+Y_testing_hat = X_testing_data %*% training_thetahat
+Y_testing_hat
+RSS_testing=sum((Y_testing_set-Y_testing_hat)^2)
+RSS_testing
+
+t = t.test(Y_training_data)
+Con_In1=t$conf.int[1]
+Con_In2=t$conf.int[2]
+error_line=t$stderr
+
+p2 <- plot(density(Y_training_data), col="blue", lwd=2,
+main="Distribution of Training Data")
+abline(v=Con_In1,col="red", lty=2)
+abline(v=Con_In2,col="red", lty=2)
+abline(v=error_line,col="black", lty=2)
+
+
+
+thetaHat_training =solve(t(X_training_data) %*% X_training_data) %*% t(X_training_data) %*%
+Y_training_data
+thetaHat_training
+length(thetaHat_training)
+dens_test=density(Y_training_data)
+plot((dens_test))
+plot(dens_test,main = "Density plot of Y Signal")
+
+### Calculating Confidential interval
+z=1.96 ##(95%) Confidential interval
+error=((Y_testing_set-Y_testing_hat))
+n_len=length(Y_testing_hat)
+Con_In1= z * sqrt( (error * (1-error) ) / n_len)
+Con_In1
+error
+Con_In2= z*sqrt( (error*(1+error) )/n_len)
+Con_In2 
+```
+```{r}
+#TASK 3
+#Model 2 will be used by selected parameters and kept constant
+array_1=0
+array_2=0
+f_value=0
+s_value=0
+Model2_thetahat
+
+Thetabias=0.483065688 #parameter chosen
+Thetaone=0.143578928 #parameter chosen
+Thetatwo=0.010038614 #constant value
+Thetafour=-0.001912836 #constant value
+Epison <- Model2_RSS * 2
+#iteration number
+iteration_num <- 100 
+Epison
+
+#Calculating Y-hat For Performing rejection ABC
+counter <- 0
+for (i in 1:iteration_num) {
+range1 <- runif(1,-0.483065688,0.483065688) # calculating the range
+range1
+range2 <- runif(1,-0.143578928,0.143578928)
+New_thetahat <- matrix(c(range1,range2,Thetatwo,Thetafour))
+New_Y_Hat <- X_model2 %*% New_thetahat ## New Y hat
+new_RSS <- sum((Y-New_Y_Hat)^2)
+new_RSS
+if (new_RSS > Epison){
+array_1[i] <- range1
+array_2[i] <- range2
+counter = counter+1
+f_value <- matrix(array_1)
+s_value <- matrix(array_2)
+}
+}
+hist(f_value,col="skyblue")
+hist(s_value,col="skyblue")
+##Ploting the graph
+plot(f_value,s_value, col = c("red", "blue"), main = "Joint and Marginal Posterior Distribution")
+```
+
+
+
+
